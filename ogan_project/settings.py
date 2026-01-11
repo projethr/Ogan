@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-j*gbff)6-z8poz8knup*twuo@^c#wgt@y60tef@zw#r!ffm5yx'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-dev')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -46,6 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -130,6 +135,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 CART_SESSION_ID = 'cart'
 
 # FedaPay Configuration
-FEDAPAY_PUBLIC_KEY = 'pk_sandbox_LYul5HvPx82GbK9ELCSblmPL'
-FEDAPAY_SECRET_KEY = 'sk_sandbox_nP3mw6xuMuGF8K1QBwmX3xjp'
-FEDAPAY_SANDBOX = True
+FEDAPAY_PUBLIC_KEY = os.getenv('FEDAPAY_PUBLIC_KEY', 'pk_sandbox_LYul5HvPx82GbK9ELCSblmPL')
+FEDAPAY_SECRET_KEY = os.getenv('FEDAPAY_SECRET_KEY', 'sk_sandbox_nP3mw6xuMuGF8K1QBwmX3xjp')
+FEDAPAY_SANDBOX = os.getenv('FEDAPAY_SANDBOX', 'True') == 'True'
+
+# Static files storage
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
