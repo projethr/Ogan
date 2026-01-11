@@ -1,0 +1,138 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Commande #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Main content -->
+        <div class="invoice p-3 mb-3">
+            <!-- title row -->
+            <div class="row">
+                <div class="col-12">
+                    <h4>
+                        <i class="fas fa-globe"></i> OGAN.
+                        <small class="float-right">Date: {{ order.created_at|date:"d/m/Y" }}</small>
+                    </h4>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- info row -->
+            <div class="row invoice-info">
+                <div class="col-sm-4 invoice-col">
+                    Client
+                    <address>
+                        <strong>{{ order.full_name }}</strong><br>
+                        {{ order.address }}<br>
+                        {{ order.city }}<br>
+                        Téléphone: {{ order.phone }}<br>
+                        Email: {{ order.email|default:"N/A" }}
+                    </address>
+                </div>
+                <!-- /.col -->
+                <div class="col-sm-4 invoice-col">
+                    <b>Commande #{{ order.id }}</b><br>
+                    <br>
+                    <b>Statut:</b>
+                    {% if order.status == 'paid' %}
+                    <span class="badge badge-success">Payée</span>
+                    {% elif order.status == 'pending' %}
+                    <span class="badge badge-warning">En attente de paiement</span>
+                    {% elif order.status == 'cancelled' %}
+                    <span class="badge badge-danger">Annulée</span>
+                    {% else %}
+                    <span class="badge badge-secondary">{{ order.get_status_display }}</span>
+                    {% endif %}
+                    <br>
+                    <b>Paiement Validé:</b> {{ order.is_paid|yesno:"Oui,Non" }}
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+
+            <!-- Table row -->
+            <div class="row">
+                <div class="col-12 table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Qté</th>
+                                <th>Produit</th>
+                                <th>Prix Unitaire</th>
+                                <th>Sous-total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ item.price }} CFA</td>
+                                <td>{{ item.get_cost }} CFA</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+                <!-- accepted payments column -->
+                <div class="col-6">
+                    <p class="lead">Actions Administrateur</p>
+                    <div class="btn-group-vertical">
+                        {% if order.status == 'pending' %}
+                        <form action="{% url 'dashboard:order_mark_paid' pk=order.pk %}" method="post"
+                            style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success float-right"
+                                onclick="return confirm('Confirmer la réception du paiement ?')">
+                                <i class="far fa-credit-card"></i> Valider le Paiement (Reçu)
+                            </button>
+                        </form>
+                        <br>
+                        <form action="{% url 'dashboard:order_cancel' pk=order.pk %}" method="post"
+                            style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger float-right" style="margin-right: 5px;"
+                                onclick="return confirm('Annuler cette commande ?')">
+                                <i class="fas fa-times"></i> Annuler la commande
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        {% if order.status == 'paid' %}
+                        <form action="{% url 'dashboard:order_mark_delivered' pk=order.pk %}" method="post"
+                            style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-info float-right"
+                                onclick="return confirm('Marquer comme livrée ?')">
+                                <i class="fas fa-truck"></i> Marquer comme Livrée
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- /.col -->
+                <div class="col-6">
+                    <p class="lead">Montant Dû</p>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tr>
+                                <th style="width:50%">Total:</th>
+                                <td><strong>{{ order.get_total_cost }} CFA</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+        <!-- /.invoice -->
+    </div><!-- /.col -->
+</div><!-- /.row -->
+{% endblock %}

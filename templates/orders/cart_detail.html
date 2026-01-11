@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-8">Votre Panier</h1>
+
+        {% if cart|length > 0 %}
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Cart Items -->
+            <div class="flex-1 bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+                <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for item in cart %}
+                    {% with product=item.product %}
+                    <li class="flex py-6 px-4">
+                        <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                                class="h-full w-full object-cover object-center">
+                            {% else %}
+                            <div
+                                class="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-600 text-gray-400">
+                                No Img</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="ml-4 flex flex-1 flex-col">
+                            <div>
+                                <div class="flex justify-between text-base font-medium text-gray-900 dark:text-white">
+                                    <h3>
+                                        <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                                    </h3>
+                                    <p class="ml-4">{{ item.price }} CFA</p>
+                                </div>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ product.category }}</p>
+                            </div>
+                            <div class="flex flex-1 items-end justify-between text-sm">
+                                <div class="flex items-center space-x-3">
+                                    <form action="{% url 'orders:cart_add' product.id %}" method="post"
+                                        class="flex items-center">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="override" value="True">
+                                        <label for="quantity-{{ product.id }}" class="sr-only">Quantité</label>
+                                        <div
+                                            class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
+                                            <button type="button"
+                                                onclick="this.parentNode.querySelector('input[type=number]').stepDown(); this.form.submit()"
+                                                class="px-2 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">-</button>
+                                            <input type="number" id="quantity-{{ product.id }}" name="quantity"
+                                                value="{{ item.quantity }}" min="1" max="99"
+                                                class="w-12 text-center border-none bg-transparent focus:ring-0 text-sm p-1 text-gray-900 dark:text-white"
+                                                onchange="this.form.submit()">
+                                            <button type="button"
+                                                onclick="this.parentNode.querySelector('input[type=number]').stepUp(); this.form.submit()"
+                                                class="px-2 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">+</button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="flex">
+                                    <form action="{% url 'orders:cart_remove' product.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                            class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">Retirer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    {% endwith %}
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="lg:w-96 bg-white dark:bg-gray-800 shadow rounded-lg p-6 h-fit">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Récapitulatif</h2>
+
+                <div class="flow-root">
+                    <dl class="-my-4 text-sm divide-y divide-gray-200 dark:divide-gray-700">
+                        <div class="py-4 flex items-center justify-between">
+                            <dt class="text-gray-600 dark:text-gray-400">Sous-total</dt>
+                            <dd class="font-medium text-gray-900 dark:text-white">{{ cart.get_total_price }} CFA</dd>
+                        </div>
+                        <div class="py-4 flex items-center justify-between">
+                            <dt class="text-gray-600 dark:text-gray-400">Livraison</dt>
+                            <dd class="font-medium text-gray-900 dark:text-white">Calculé au paiement</dd>
+                        </div>
+                        <div class="py-4 flex items-center justify-between">
+                            <dt class="text-base font-medium text-gray-900 dark:text-white">Total</dt>
+                            <dd class="text-base font-medium text-gray-900 dark:text-white">{{ cart.get_total_price }}
+                                CFA</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="mt-6">
+                    <a href="{% url 'orders:order_create' %}"
+                        class="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                        Passer la commande
+                    </a>
+                </div>
+                <div class="mt-6 flex justify-center text-sm text-center text-gray-500 dark:text-gray-400">
+                    <p>
+                        ou <a href="{% url 'store:product_list' %}"
+                            class="text-indigo-600 font-medium hover:text-indigo-500 dark:text-indigo-400">Continuer vos
+                            achats<span aria-hidden="true"> &rarr;</span></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-24">
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Votre panier est vide</h2>
+            <p class="mt-2 text-gray-500 dark:text-gray-400">Découvrez nos produits et commencez à commander.</p>
+            <div class="mt-6">
+                <a href="{% url 'store:product_list' %}"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                    Catalogue
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

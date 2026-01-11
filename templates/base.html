@@ -1,0 +1,225 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OGAN by LSM{% endblock %}</title>
+    <link href="{% static 'css/output.css' %}?v=1.1" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="{% static 'img/Ogan_icon.jpg' %}">
+    <script>
+        // Check local storage or system preference for dark mode
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 font-sans transition-colors duration-200">
+
+    <!-- Navbar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="{% url 'core:home' %}"
+                        class="text-2xl font-bold text-gray-900 dark:text-white tracking-widest uppercase">
+                        OGAN<span class="text-xs ml-1 font-light tracking-normal text-gray-500">by LSM</span>
+                    </a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-8">
+                    <a href="{% url 'core:home' %}"
+                        class="text-gray-900 dark:text-gray-300 hover:text-black dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Accueil</a>
+                    <a href="{% url 'store:product_list' %}"
+                        class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Catalogue</a>
+                    <a href="{% url 'core:about' %}"
+                        class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">À
+                        propos</a>
+                    <a href="{% url 'core:home' %}#footer"
+                        class="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                </div>
+
+                <!-- Right Side: Dark Mode Toggle & Cart & Mobile Menu -->
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle"
+                        class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none rounded-lg text-sm p-2.5">
+                        <!-- Dark Icon -->
+                        <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <!-- Light Icon -->
+                        <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"
+                                fill-rule="evenodd" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+
+                    <a href="{% url 'orders:cart_detail' %}"
+                        class="relative p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        {% with cart_len=cart|length %}
+                        {% if cart_len > 0 %}
+                        <span
+                            class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full">
+                            {{ cart_len }}
+                        </span>
+                        {% endif %}
+                        {% endwith %}
+                    </a>
+
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-button" type="button"
+                        class="sm:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div id="mobile-menu"
+            class="hidden sm:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="{% url 'core:home' %}"
+                    class="block text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Accueil</a>
+                <a href="{% url 'store:product_list' %}"
+                    class="block text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Catalogue</a>
+                <a href="{% url 'core:home' %}#footer"
+                    class="block text-gray-900 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-base font-medium">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer id="footer"
+        class="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 py-8 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col items-center text-center space-y-6">
+
+                <!-- Brand & Slogan -->
+                <div class="space-y-1">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white tracking-[0.2em] uppercase">OGAN</h3>
+                    <p class="text-indigo-600 dark:text-indigo-400 font-medium text-xs">Commence, persévère et deviens
+                        OGAN 👑</p>
+                </div>
+
+                <!-- Contact Icons & Links (Centered & Compact) -->
+                <div class="flex flex-col items-center space-y-3">
+
+                    <!-- Catalogue -->
+                    <a href="https://wa.me/c/22943803804" target="_blank"
+                        class="group flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-white transition-colors">
+                        <span class="text-lg">🧢</span>
+                        <span class="font-medium">Voir le catalogue & commander :</span>
+                        <span
+                            class="font-bold underline text-indigo-500 group-hover:text-indigo-600">https://wa.me/c/22943803804</span>
+                    </a>
+
+                    <!-- Boutique WhatsApp -->
+                    <a href="https://wa.me/22943803804" target="_blank"
+                        class="group flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-white transition-colors">
+                        <span class="text-lg">📩</span>
+                        <span class="font-medium">Boutique WhatsApp (commandes) :</span>
+                        <span
+                            class="font-bold underline text-indigo-500 group-hover:text-indigo-600">wa.me/22943803804</span>
+                    </a>
+
+                    <!-- Contact Direct -->
+                    <a href="https://wa.me/2290151480742" target="_blank"
+                        class="group flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-white transition-colors">
+                        <span class="text-lg">📞</span>
+                        <span class="font-medium">Contact direct – infos rapides :</span>
+                        <span class="font-bold underline text-indigo-500 group-hover:text-indigo-600">+229 01 51 48 07
+                            42</span>
+                    </a>
+                </div>
+
+                <!-- Bottom Copyright & Credit -->
+                <div
+                    class="pt-6 border-t border-gray-100 dark:border-gray-700 w-full max-w-xs flex flex-col items-center space-y-1 text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+                    <p>&copy; 2026 OGAN by LSM. Tous droits réservés.</p>
+                    <div class="flex items-center space-x-1">
+                        <span>Created by</span>
+                        <a href="https://github.com/Asher-wl" target="_blank"
+                            class="text-indigo-500 hover:text-indigo-600 font-bold transition-colors">Asher_wl</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // Change the icons inside the button based on previous settings
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        var themeToggleBtn = document.getElementById('theme-toggle');
+
+        themeToggleBtn.addEventListener('click', function () {
+            // toggle icons inside button
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            // if set via local storage previously
+            if (localStorage.theme) {
+                if (localStorage.theme === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                }
+
+                // if NOT set via local storage previously
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            }
+        });
+
+        // Mobile menu toggle
+        var mobileMenuBtn = document.getElementById('mobile-menu-button');
+        var mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', function () {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+
+</html>

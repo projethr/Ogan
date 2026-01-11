@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --color-primary: #1a202c;
+    --color-secondary: #ecc94b;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+@source "../../templates/**/*.html";
+@source "../../**/templates/**/*.html";
+@source "../../**/forms.py";

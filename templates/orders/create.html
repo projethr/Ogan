@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 py-16 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12">
+        <div class="lg:w-2/3">
+            <h1 class="text-4xl font-black text-gray-900 dark:text-white mb-8 tracking-tight uppercase">Finaliser la
+                commande</h1>
+
+            <div
+                class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
+                <div
+                    class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 flex items-center bg-gray-50/50 dark:bg-gray-800/50">
+                    <div
+                        class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold mr-4">
+                        1</div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Informations de livraison</h3>
+                        <p class="text-xs text-gray-500">Où devons-nous envoyer votre commande ?</p>
+                    </div>
+                </div>
+
+                <div class="p-8">
+                    <form action="." method="post" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div
+                            class="{% if field.name == 'address' or field.name == 'full_name' %}md:col-span-2{% endif %}">
+                            <label for="{{ field.id_for_label }}"
+                                class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-2 ml-1">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <p class="mt-2 text-[10px] text-red-500 font-bold uppercase">{{ field.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="md:col-span-2 pt-8">
+                            <button type="submit"
+                                class="w-full bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 py-4 px-8 rounded-xl font-black uppercase tracking-widest hover:bg-indigo-600 dark:hover:bg-indigo-400 transition-all duration-300 shadow-lg transform hover:-translate-y-1">
+                                Passer au paiement &rarr;
+                            </button>
+                            <p class="text-center text-[10px] text-gray-400 mt-4 uppercase tracking-tighter italic">
+                                Paiement sécurisé via MTN Mobile Money</p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:w-1/3">
+            <div
+                class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl p-8 border border-gray-100 dark:border-gray-700 sticky top-24">
+                <h3 class="text-xl font-black text-gray-900 dark:text-white mb-6 uppercase">Votre sélection</h3>
+                <ul class="divide-y divide-gray-100 dark:divide-gray-700 mb-6">
+                    {% for item in cart %}
+                    <li class="py-4 flex items-center">
+                        <div class="h-16 w-16 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                            {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" class="h-full w-full object-cover">
+                            {% endif %}
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-sm font-bold text-gray-900 dark:text-white uppercase">{{ item.product.name }}
+                            </p>
+                            <p class="text-xs text-gray-500">Qté: {{ item.quantity }}</p>
+                        </div>
+                        <p class="text-sm font-black text-gray-900 dark:text-white">{{ item.total_price }} CFA</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="space-y-3 border-t border-gray-100 dark:border-gray-700 pt-6">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500 uppercase tracking-widest">Sous-total</span>
+                        <span class="font-bold">{{ cart.get_total_price }} CFA</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-500 uppercase tracking-widest">Livraison</span>
+                        <span class="text-green-600 font-bold">Inclus</span>
+                    </div>
+                    <div class="flex justify-between items-end pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <span class="text-sm font-black uppercase">Total</span>
+                        <span class="text-2xl font-black text-indigo-600">{{ cart.get_total_price }} CFA</span>
+                    </div>
+                </div>
+
+                <a href="{% url 'orders:cart_detail' %}"
+                    class="block text-center text-xs font-bold text-gray-400 hover:text-gray-900 mt-8 underline uppercase tracking-widest">Modifier
+                    le panier</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
