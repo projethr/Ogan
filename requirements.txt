@@ -4,4 +4,3 @@ whitenoise
 python-dotenv
 dj-database-url
 Pillow
-fedapay-python

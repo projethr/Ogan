@@ -131,12 +131,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# CART_SESSION_ID = 'cart'
 CART_SESSION_ID = 'cart'
-
-# FedaPay Configuration
-FEDAPAY_PUBLIC_KEY = os.getenv('FEDAPAY_PUBLIC_KEY', 'pk_sandbox_LYul5HvPx82GbK9ELCSblmPL')
-FEDAPAY_SECRET_KEY = os.getenv('FEDAPAY_SECRET_KEY', 'sk_sandbox_nP3mw6xuMuGF8K1QBwmX3xjp')
-FEDAPAY_SANDBOX = os.getenv('FEDAPAY_SANDBOX', 'True') == 'True'
 
 # Static files storage
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
