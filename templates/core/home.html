@@ -43,9 +43,23 @@
         </div>
     </div>
     <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-        <img class="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
-            src="{% static 'img/ogan_brand_image.png' %}" alt="OGAN Cap">
+        <div class="grid grid-cols-2 lg:grid-cols-2 h-56 sm:h-72 md:h-96 lg:h-full">
+
+            <!-- Homme -->
+            <div class="relative">
+                <img src="{% static 'img/ogan_homme.jpg' %}" alt="OGAN Homme" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-black/10 dark:bg-black/30"></div>
+            </div>
+
+            <!-- Femme -->
+            <div class="relative">
+                <img src="{% static 'img/ogan_femme.jpg' %}" alt="OGAN Femme" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-black/10 dark:bg-black/30"></div>
+            </div>
+
+        </div>
     </div>
+
 </div>
 
 <!-- Featured Section (Placeholder) -->
